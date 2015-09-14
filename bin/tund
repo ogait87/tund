@@ -1,0 +1,61 @@
+#!/usr/bin/python2
+
+import sys
+import argparse
+import ConfigParser
+import subprocess
+
+def config_get(config, section, option, default = None):
+    if config.has_option(section, option):
+        return config.get(section, option)
+    else:
+        return default
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Keeps a reverse ssh tunnel open')
+    parser.add_argument('--config', type=file, required=True, help='Path to config file')
+
+    args = parser.parse_args()
+
+    print args.config
+
+    config = ConfigParser.ConfigParser()
+    config.readfp(args.config)
+
+    Hostname     = config_get(config, "Server", "Hostname")
+    Port         = config_get(config, "Server", "Port")
+    User         = config_get(config, "Server", "User")
+    IdentityFile = config_get(config, "Server", "IdentityFile")
+    RemoteBind   = config_get(config, "Server", "RemoteBind")
+    RemotePort   = config_get(config, "Server", "RemotePort")
+
+    if Hostname == None:
+        raise RuntimeError("Invalid Hostname '%s'" % Hostname)
+
+    cmd = ["ssh", Hostname]
+
+    if Port != None:
+        cmd += ["-p", str(Port)]
+
+    if User != None:
+        cmd += ["-l", str(User)]
+
+    if IdentityFile != None:
+        cmd += ["-i", str(IdentityFile)]
+
+    if RemotePort == None:
+        raise RuntimeError("Invalid RemotePort '%s'" % RemotePort)
+
+    RemoteDef = "%s:127.0.0.1:22" % RemotePort
+
+    if RemoteBind != None:
+        RemoteDef = RemoteBind + ":" + RemoteDef
+
+    cmd += ["-R", RemoteDef]
+
+    cmd += ["-N"]
+
+    print cmd
+    print " ".join(cmd)
+    subprocess.check_call(cmd)
+

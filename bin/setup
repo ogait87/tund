@@ -1,0 +1,26 @@
+#!/bin/sh
+
+DIR=$(cd $(dirname $0)/..; pwd -P)
+
+ETC_DIR=/etc/tund
+BIN_DIR=/usr/local/bin
+
+# Install tund binary
+install -m 700 -o root -g root -D "${DIR}/bin/tund" "${BIN_DIR}/tund"
+
+# Create and/or Install key
+if [ ! -e "${ETC_DIR}/tund.key" ]
+then
+  if [ ! -e "${DIR}/etc/tund.key" ]
+  then
+    # Generate key
+    ssh-keygen -b 4096 -N "" -O clear -O permit-port-forwarding -t rsa -f "${DIR}/etc/tund.key"
+    echo "Public key is"
+    cat "${DIR}/etc/tund.key.pub"
+  fi
+
+  # Install key
+  install -m 600 -o root -g root -D "${DIR}/etc/tund.key"     "${ETC_DIR}/tund.key"
+  install -m 600 -o root -g root -D "${DIR}/etc/tund.key.pub" "${ETC_DIR}/tund.key.pub"
+fi
+
