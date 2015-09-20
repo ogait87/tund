@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Inspired from http://www.mikeslab.net/?p=176
+
+### BEGIN INIT INFO
+# Provides: tund
+# Required-Start: $network $remote_fs $syslog
+# Required-Stop: $network $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: SSH reverse tunnel daemon
+# Description: Reverse SSH Tunnel Daemon on '/etc/tund/tund.conf'.
+### END INIT INFO
+
+# If you want a command to always run, put it here
+ 
+# Carry out specific functions when asked to by the system
+case "$1" in
+start)
+echo "Starting tund"
+# run application you want to start
+/usr/local/bin/tund --config /etc/tund/tund.conf start
+;;
+stop)
+echo "Stopping tund"
+# kill application you want to stop
+/usr/local/bin/tund --config /etc/tund/tund.conf stop
+;;
+*)
+echo "Usage: /etc/init.d/noip {start|stop}"
+exit 1
+;;
+esac
+ 
+exit 0
+

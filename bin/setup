@@ -6,7 +6,10 @@ ETC_DIR=/etc/tund
 BIN_DIR=/usr/local/bin
 
 # Install tund binary
-install -m 700 -o root -g root -D "${DIR}/bin/tund" "${BIN_DIR}/tund"
+install -m 755 -o root -g root -D "${DIR}/bin/tund" "${BIN_DIR}/tund"
+
+# Install service files
+install -m 755 -o root -g root -D "${DIR}/inits/init.d/tund" "/etc/init.d/tund"
 
 # Create and/or Install key
 if [ ! -e "${ETC_DIR}/tund.key" ]
@@ -23,4 +26,17 @@ then
   install -m 600 -o root -g root -D "${DIR}/etc/tund.key"     "${ETC_DIR}/tund.key"
   install -m 600 -o root -g root -D "${DIR}/etc/tund.key.pub" "${ETC_DIR}/tund.key.pub"
 fi
+
+# Create default config
+if [ ! -e "${ETC_DIR}/tund.conf" ]
+then
+  install -m 600 -o root -g root -D "${DIR}/etc/tund.conf" "${ETC_DIR}/tund.conf"
+fi
+
+#
+echo "# TODO, configure service and register remote ssh server key by making a connection"
+echo "sudo \$EDITOR \"${ETC_DIR}/tund.conf\""
+echo "sudo \"${BIN_DIR}/tund\" --config \"${ETC_DIR}/tund.conf\" setup"
+
+# TODO sudo update-rc.d tund defaults
 
