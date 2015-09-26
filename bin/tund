@@ -146,9 +146,12 @@ class MyDaemon(Daemon):
 
         while True:
             print
+            
             print datetime.datetime.now()
             sys.stdout.flush()
             subprocess.call(self.cmd)
+            
+            print datetime.datetime.now()
             print "sleeping ..."
             sys.stdout.flush()
             time.sleep(self.daemon_delay)
