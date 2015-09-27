@@ -191,6 +191,8 @@ if __name__ == "__main__":
     RemoteBind   = config_get(config, "Server", "RemoteBind")
     RemotePort   = config_get(config, "Server", "RemotePort")
 
+    ServerAliveInterval = config_get(config, "Server", "ServerAliveInterval", 10)
+
     daemon_pid_file = config_get(config, "Daemon", "pid_file", "/var/run/tund.pid")
     daemon_log_file = config_get(config, "Daemon", "log_file", "/var/log/tund.log")
     daemon_delay    = float(config_get(config, "Daemon", "delay", 60))
@@ -219,6 +221,9 @@ if __name__ == "__main__":
             RemoteDef = RemoteBind + ":" + RemoteDef
 
         cmd += ["-R", RemoteDef]
+
+        if ServerAliveInterval > 0:
+            cmd += ["-o", "ServerAliveInterval=%d" % ServerAliveInterval]
 
     if args.command == "setup":
         cmd += ["--", "echo", "OK"]
